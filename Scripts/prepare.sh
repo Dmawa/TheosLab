@@ -29,4 +29,8 @@ fi
 if [[ "${THEOSLAB_EMBED_SDKS:-0}" == 1 ]]; then
     ./Scripts/embed-sdks.sh
 fi
+if [[ -d "$guest" && ! -e "$guest.zip" ]]; then
+    printf '%s\n' "Archiving Generated/Guest into Guest.zip (keeps Linux ELF out of the signed bundle)..."
+    ditto -c -k --keepParent "$guest" "$guest.zip"
+fi
 xcodegen generate

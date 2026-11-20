@@ -6,6 +6,10 @@ Theos Lab v2.8 includes the tools below. The Theos Lab sources and the scripts t
 
 The iOS app links IshEmbed v0.3.3, distributed under GPL-3.0. The source package pins iSH as a Git submodule. Clone IshEmbed at the release commit, run `git submodule update --init --recursive`, and follow its `scripts/build-ios.sh` and `scripts/build-rootfs.sh` instructions to rebuild the library and base guest. [IshEmbed source](https://github.com/Lolendor/ish-arm64-pkg/tree/6f96f02c71830914c2a608258a26a8ef0833d026) · [iSH source](https://github.com/Lolendor/ish-arm64/tree/2f075626049d989dc9ac350a35c09f0b18930ffc)
 
+## ZIPFoundation
+
+The app links ZIPFoundation 0.9.19 (MIT) to unpack the bundled guest image on first launch. [ZIPFoundation source](https://github.com/weichsel/ZIPFoundation/tree/0.9.19)
+
 ## Theos
 
 Theos is distributed under GPL-3.0-or-later. Its source tree includes the Makefiles and references its vendor submodules at their corresponding revisions. Vendor directories in the IPA retain their upstream notices. `Scripts/provision-toolchain.sh` checks out the source and its submodules. `Scripts/export-toolchain.py` changes the vendor-presence check in `makefiles/master/rules.mk` to work with the packaged source tree. [Theos source](https://github.com/theos/theos/tree/8167f59de02fd32cf45b16bfcb1330dfa5c9974c) · [Provisioning script](Scripts/provision-toolchain.sh) · [Export script](Scripts/export-toolchain.py)

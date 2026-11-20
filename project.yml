@@ -9,6 +9,9 @@ packages:
   MachOKit:
     url: https://github.com/p-x9/MachOKit
     revision: 7b5921f601d8d91043faab7820040cd585904720
+  ZIPFoundation:
+    url: https://github.com/weichsel/ZIPFoundation
+    exactVersion: 0.9.19
 targets:
   CapstoneCore:
     type: library.static
@@ -42,11 +45,12 @@ targets:
         buildPhase: resources
       - path: ALPINE-PACKAGES.tsv
         buildPhase: resources
-      - path: Generated/Guest
-        type: folder
+      - path: Generated/Guest.zip
+        buildPhase: resources
     dependencies:
       - package: IshEmbed
       - package: MachOKit
+      - package: ZIPFoundation
       - target: CapstoneCore
     settings:
       base:
