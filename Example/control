@@ -1,0 +1,8 @@
+Package: local.theoslab.example
+Name: Theos Lab Practice
+Version: 1.0
+Architecture: iphoneos-arm
+Description: A two-file C library for learning Theos.
+Maintainer: Theos Lab
+Author: Theos Lab
+Section: Development

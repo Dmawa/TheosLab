@@ -1,0 +1,102 @@
+location	package	version	origin	license	aports revision
+build guest	alpine-baselayout	3.4.3-r2	alpine-baselayout	GPL-2.0-only	7749273fed55f6e1df7c9ee6a127f18099f98a94
+build guest	alpine-baselayout-data	3.4.3-r2	alpine-baselayout	GPL-2.0-only	7749273fed55f6e1df7c9ee6a127f18099f98a94
+build guest	alpine-keys	2.4-r1	alpine-keys	MIT	aab68f8c9ab434a46710de8e12fb3206e2930a59
+build guest	apk-tools	2.14.0-r5	apk-tools	GPL-2.0-only	33283848034c9885d984c8e8697c645c57324938
+build guest	bash	5.2.21-r0	bash	GPL-3.0-or-later	6a9559d98850225ba80771901ef1abda91cb29aa
+build guest	binutils	2.41-r1	binutils	GPL-2.0-or-later AND LGPL-2.1-or-later AND BSD-3-Clause	725e2b179050727f3dd9f3258caabeea1ec38340
+build guest	brotli-libs	1.1.0-r1	brotli	MIT	63284a52a10b5b56250d30784d1c549a5be3f02c
+build guest	busybox	1.36.1-r15	busybox	GPL-2.0-only	d1b6f274f29076967826e0ecf6ebcaa5d360272f
+build guest	busybox-binsh	1.36.1-r15	busybox	GPL-2.0-only	d1b6f274f29076967826e0ecf6ebcaa5d360272f
+build guest	c-ares	1.27.0-r0	c-ares	MIT	03c4df03632f440e54e252aac4912b6f92d2e2a2
+build guest	ca-certificates	20261020-r0	ca-certificates	MPL-2.0 AND MIT	1db8ad40d4b1fb4947cc9ffe432085a336c8dd26
+build guest	ca-certificates-bundle	20230506-r0	ca-certificates	MPL-2.0 AND MIT	59534a02716a92a10d177a118c34066162eff4a6
+build guest	clang17	17.0.5-r0	clang17	Apache-2.0 WITH LLVM-exception	926cd5207a11d21aef08e0df5e97782cc90b97a0
+build guest	clang17-headers	17.0.5-r0	clang17	Apache-2.0 WITH LLVM-exception	926cd5207a11d21aef08e0df5e97782cc90b97a0
+build guest	clang17-libs	17.0.5-r0	clang17	Apache-2.0 WITH LLVM-exception	926cd5207a11d21aef08e0df5e97782cc90b97a0
+build guest	coreutils	9.4-r2	coreutils	GPL-3.0-or-later	4bc611f0ffa9e15636dce9c13efc9cd727c086f7
+build guest	coreutils-env	9.4-r2	coreutils	GPL-3.0-or-later	4bc611f0ffa9e15636dce9c13efc9cd727c086f7
+build guest	coreutils-fmt	9.4-r2	coreutils	GPL-3.0-or-later	4bc611f0ffa9e15636dce9c13efc9cd727c086f7
+build guest	coreutils-sha512sum	9.4-r2	coreutils	GPL-3.0-or-later	4bc611f0ffa9e15636dce9c13efc9cd727c086f7
+build guest	curl	8.14.1-r2	curl	curl	1a2c278579367730e8291be26a5ccdd50d6e84af
+build guest	dpkg	1.22.1-r0	dpkg	GPL-2.0-or-later AND BSD-2-Clause	fabb6354d61fa1758376de072339d6f95888dca1
+build guest	fakeroot	1.32.1-r0	fakeroot	GPL-3.0-or-later	9be7e1ccf97ed6ec4d684d8fb09c3c7c02b7d702
+build guest	file	5.45-r1	file	BSD-2-Clause	ead0486e7ef976c62f2832efb2c145005a760ea2
+build guest	findutils	4.9.0-r5	findutils	GPL-3.0-or-later	84a227baf001b6e0208e3352b294e4d7a40e93de
+build guest	fortify-headers	1.1-r3	fortify-headers	0BSD	e391471bb3ce8aaac068a64c684ed60d5bf3d148
+build guest	gcc	13.2.1_git20231014-r0	gcc	GPL-2.0-or-later AND LGPL-2.1-or-later	090e168783a86e5c2ba31fc65921b9715bac62ff
+build guest	git	2.43.7-r0	git	GPL-2.0-only	59af3bdc7fcfb443523615e81a8b46ef2da0107d
+build guest	git-perl	2.43.7-r0	git	GPL-2.0-only	59af3bdc7fcfb443523615e81a8b46ef2da0107d
+build guest	gmp	6.3.0-r0	gmp	LGPL-3.0-or-later OR GPL-2.0-or-later	4f7f352700bb993b08cff24285a406014c4acaa5
+build guest	isl26	0.26-r1	isl26	MIT	84a227baf001b6e0208e3352b294e4d7a40e93de
+build guest	jansson	2.14-r4	jansson	MIT	98f1223d0dbb22dbfe0bede7a7f1a0fef68e0b15
+build guest	libacl	2.3.1-r4	acl	LGPL-2.1-or-later AND GPL-2.0-or-later	33283848034c9885d984c8e8697c645c57324938
+build guest	libatomic	13.2.1_git20231014-r0	gcc	GPL-2.0-or-later AND LGPL-2.1-or-later	090e168783a86e5c2ba31fc65921b9715bac62ff
+build guest	libattr	2.5.1-r5	attr	LGPL-2.1-or-later	33283848034c9885d984c8e8697c645c57324938
+build guest	libbz2	1.0.8-r6	bzip2	bzip2-1.0.6	33283848034c9885d984c8e8697c645c57324938
+build guest	libc-utils	0.7.2-r5	libc-dev	BSD-2-Clause AND BSD-3-Clause	988f183cc9d6699930c3e18ccf4a9e36010afb56
+build guest	libcrypto3	3.1.4-r5	openssl	Apache-2.0	b784a22cad0c452586b438cb7a597d846fc09ff4
+build guest	libcurl	8.14.1-r2	curl	curl	1a2c278579367730e8291be26a5ccdd50d6e84af
+build guest	libexpat	2.7.3-r0	expat	MIT	9424776b45c7222472facfb1136990cc6cc9af60
+build guest	libffi	3.4.4-r3	libffi	MIT	33283848034c9885d984c8e8697c645c57324938
+build guest	libgcc	13.2.1_git20231014-r0	gcc	GPL-2.0-or-later AND LGPL-2.1-or-later	090e168783a86e5c2ba31fc65921b9715bac62ff
+build guest	libgomp	13.2.1_git20231014-r0	gcc	GPL-2.0-or-later AND LGPL-2.1-or-later	090e168783a86e5c2ba31fc65921b9715bac62ff
+build guest	libidn2	2.3.4-r4	libidn2	GPL-2.0-or-later OR LGPL-3.0-or-later	3d07ca5b68892e5531f0cd7908d34e4ff0f18a99
+build guest	libmagic	5.45-r1	file	BSD-2-Clause	ead0486e7ef976c62f2832efb2c145005a760ea2
+build guest	libmd	1.1.0-r0	libmd	BSD-3-Clause AND BSD-2-Clause AND ISC AND Beerware AND Public Domain	73e716067b9edc32c4cc7818cb7d206e57fdde15
+build guest	libncursesw	6.4_p20231125-r0	ncurses	X11	6e07a4fb8681687ace8c822eb304d3d5bdb6ecf8
+build guest	libpsl	0.21.5-r0	libpsl	MIT	30e43e6094dde56641b53800a9fe557797842d1d
+build guest	libssl3	3.1.4-r5	openssl	Apache-2.0	b784a22cad0c452586b438cb7a597d846fc09ff4
+build guest	libstdc++	13.2.1_git20231014-r0	gcc	GPL-2.0-or-later AND LGPL-2.1-or-later	090e168783a86e5c2ba31fc65921b9715bac62ff
+build guest	libstdc++-dev	13.2.1_git20231014-r0	gcc	GPL-2.0-or-later AND LGPL-2.1-or-later	090e168783a86e5c2ba31fc65921b9715bac62ff
+build guest	libunistring	1.1-r2	libunistring	GPL-2.0-or-later OR LGPL-3.0-or-later	33283848034c9885d984c8e8697c645c57324938
+build guest	libxml2	2.11.8-r3	libxml2	MIT	8d2d9631e345b420833f4b7a9fb0f4b57f6eff7b
+build guest	libxxhash	0.8.2-r2	xxhash	BSD-2-Clause	7c4c974879799dc7b151855390e42e18e0be2e08
+build guest	lld	17.0.5-r0	lld	Apache-2.0	08978397c52a6e4a99499263a615aaf2ccde4352
+build guest	lld-libs	17.0.5-r0	lld	Apache-2.0	08978397c52a6e4a99499263a615aaf2ccde4352
+build guest	llvm17	17.0.5-r0	llvm17	Apache-2.0	98121cb8d2e994f0a2b32d4e19407450e8e7c3e9
+build guest	llvm17-libs	17.0.5-r0	llvm17	Apache-2.0	98121cb8d2e994f0a2b32d4e19407450e8e7c3e9
+build guest	llvm17-linker-tools	17.0.5-r0	llvm17	Apache-2.0	98121cb8d2e994f0a2b32d4e19407450e8e7c3e9
+build guest	lz4-libs	1.9.4-r5	lz4	BSD-2-Clause AND GPL-2.0-only	33283848034c9885d984c8e8697c645c57324938
+build guest	make	4.4.1-r2	make	GPL-3.0-or-later	2360b6d78eeafe5b88b6409a4c94dc591339d40c
+build guest	mpc1	1.3.1-r1	mpc1	LGPL-3.0-or-later	84a227baf001b6e0208e3352b294e4d7a40e93de
+build guest	mpfr4	4.2.1-r0	mpfr4	LGPL-3.0-or-later	f0981ab6660cc878d98f8dab150cbcf62206b2db
+build guest	musl	1.2.4_git20230717-r6	musl	MIT	e45b2348e7613bb06dc30a0ae0182f7e2c924768
+build guest	musl-dev	1.2.4_git20230717-r6	musl	MIT	e45b2348e7613bb06dc30a0ae0182f7e2c924768
+build guest	musl-utils	1.2.4_git20230717-r4	musl	MIT AND BSD-2-Clause AND GPL-2.0-or-later	ca7f2ab5e88794e4e654b40776f8a92256f50639
+build guest	ncurses-terminfo-base	6.4_p20231125-r0	ncurses	X11	6e07a4fb8681687ace8c822eb304d3d5bdb6ecf8
+build guest	nghttp2-libs	1.58.0-r0	nghttp2	MIT	6ef35a3461df71065266d1706d0eebeac9755130
+build guest	pcre2	10.42-r2	pcre2	BSD-3-Clause	b28c327c836a7b50fe1fa5f92676a7bda303bb93
+build guest	perl	5.38.5-r0	perl	Artistic-1.0-Perl OR GPL-1.0-or-later	eedeb333e0e39b8937978c89fba8f9feecce79ae
+build guest	perl-error	0.17029-r2	perl-error	GPL-1.0-or-later OR Artistic-1.0-Perl	4ece6fc07c96d6859dde2ecc31b323fb3b355638
+build guest	perl-git	2.43.7-r0	git	GPL-2.0-only	59af3bdc7fcfb443523615e81a8b46ef2da0107d
+build guest	popt	1.19-r3	popt	MIT	33283848034c9885d984c8e8697c645c57324938
+build guest	readline	8.2.1-r2	readline	GPL-2.0-or-later	33283848034c9885d984c8e8697c645c57324938
+build guest	rsync	3.4.1-r1	rsync	GPL-3.0-or-later	54a2c7c30373b6bf5a6805f055cb06306933d898
+build guest	scanelf	1.3.7-r2	pax-utils	GPL-2.0-only	e65a4f2d0470e70d862ef2b5c412ecf2cb9ad0a6
+build guest	scudo-malloc	17.0.5-r0	scudo-malloc	Apache-2.0 WITH LLVM-exception	3b341576545b789cce2875763233f68ac26a7f96
+build guest	skalibs	2.14.0.1-r0	skalibs	ISC	2f4a52a7d12d9bc30e2d86189233fa5ff5a17f30
+build guest	ssl_client	1.36.1-r15	busybox	GPL-2.0-only	d1b6f274f29076967826e0ecf6ebcaa5d360272f
+build guest	tar	1.35-r2	tar	GPL-3.0-or-later	847ff38eb449c4700ec5f6b32f5c2a08933f3027
+build guest	unzip	6.0-r14	unzip	custom	84a227baf001b6e0208e3352b294e4d7a40e93de
+build guest	utmps-libs	0.1.2.2-r0	utmps	ISC	d6a6a3109f65e597a916e5d7ae199cbab695d461
+build guest	xz	5.4.5-r1	xz	GPL-2.0-or-later AND Public-Domain AND LGPL-2.1-or-later	175d681f4bc9a7968b726457128908264ff01ca3
+build guest	xz-libs	5.4.5-r1	xz	GPL-2.0-or-later AND Public-Domain AND LGPL-2.1-or-later	175d681f4bc9a7968b726457128908264ff01ca3
+build guest	zip	3.0-r12	zip	Info-ZIP	c81c40f0291807a76db414fb4d8ccacd4ff33292
+build guest	zlib	1.3.1-r0	zlib	Zlib	9406f6fc5fca057d990eb0d260d75839eeb34d83
+build guest	zstd-libs	1.5.5-r8	zstd	BSD-3-Clause OR GPL-2.0-or-later	d75565383012488c488240adb11f33cb9dfc9d59
+base VM template	alpine-baselayout	3.4.3-r2	alpine-baselayout	GPL-2.0-only	7749273fed55f6e1df7c9ee6a127f18099f98a94
+base VM template	alpine-baselayout-data	3.4.3-r2	alpine-baselayout	GPL-2.0-only	7749273fed55f6e1df7c9ee6a127f18099f98a94
+base VM template	alpine-keys	2.4-r1	alpine-keys	MIT	aab68f8c9ab434a46710de8e12fb3206e2930a59
+base VM template	apk-tools	2.14.0-r5	apk-tools	GPL-2.0-only	33283848034c9885d984c8e8697c645c57324938
+base VM template	busybox	1.36.1-r15	busybox	GPL-2.0-only	d1b6f274f29076967826e0ecf6ebcaa5d360272f
+base VM template	busybox-binsh	1.36.1-r15	busybox	GPL-2.0-only	d1b6f274f29076967826e0ecf6ebcaa5d360272f
+base VM template	ca-certificates-bundle	20230506-r0	ca-certificates	MPL-2.0 AND MIT	59534a02716a92a10d177a118c34066162eff4a6
+base VM template	libc-utils	0.7.2-r5	libc-dev	BSD-2-Clause AND BSD-3-Clause	988f183cc9d6699930c3e18ccf4a9e36010afb56
+base VM template	libcrypto3	3.1.4-r5	openssl	Apache-2.0	b784a22cad0c452586b438cb7a597d846fc09ff4
+base VM template	libssl3	3.1.4-r5	openssl	Apache-2.0	b784a22cad0c452586b438cb7a597d846fc09ff4
+base VM template	musl	1.2.4_git20230717-r4	musl	MIT	ca7f2ab5e88794e4e654b40776f8a92256f50639
+base VM template	musl-utils	1.2.4_git20230717-r4	musl	MIT AND BSD-2-Clause AND GPL-2.0-or-later	ca7f2ab5e88794e4e654b40776f8a92256f50639
+base VM template	scanelf	1.3.7-r2	pax-utils	GPL-2.0-only	e65a4f2d0470e70d862ef2b5c412ecf2cb9ad0a6
+base VM template	ssl_client	1.36.1-r15	busybox	GPL-2.0-only	d1b6f274f29076967826e0ecf6ebcaa5d360272f
+base VM template	zlib	1.3.1-r0	zlib	Zlib	9406f6fc5fca057d990eb0d260d75839eeb34d83
