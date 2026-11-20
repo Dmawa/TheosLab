@@ -31,6 +31,14 @@ jobs:
               clang17 lld llvm17 llvm17-dev dpkg fakeroot coreutils findutils \
               xz tar rsync file zip build-base meson ninja musl-dev gcc radare2
 
+          echo "==> Install zig (needed by iSH supervisor Makefile)"
+          ZIGVER=0.13.0
+          curl -fL "https://ziglang.org/download/${ZIGVER}/zig-linux-aarch64-${ZIGVER}.tar.xz" -o /tmp/zig.tar.xz
+          mkdir -p /opt/zig
+          tar -xJf /tmp/zig.tar.xz -C /opt/zig --strip-components=1
+          ln -sf /opt/zig/zig /usr/local/bin/zig
+          zig version
+
           echo "==> Provision Theos toolchain (guest = this container)"
           bash /repo/Scripts/provision-toolchain.sh
 
