@@ -46,11 +46,15 @@ final class REBinary {
                 guard let candidate = try? MachOFile(url: url, headerStartOffset: offset) else { continue }
                 let rawType = candidate.header.layout.cputype
                 let rawSub = candidate.header.layout.cpusubtype
+                let combo: UInt32
                 if rawType == 0x0100_000C { // CPU_TYPE_ARM64
-                    candidates.append((UInt32(bitPattern: rawSub), candidate, offset))
+                    combo = rawSub < 0 ? UInt32(bitPattern: rawSub) : 0x0100_000C
                 } else if rawType == 0x0000_000C { // CPU_TYPE_ARM
-                    candidates.append((UInt32(bitPattern: rawSub & 0x00FF_FFFF), candidate, offset))
+                    combo = UInt32(bitPattern: rawType)
+                } else {
+                    continue
                 }
+                candidates.append((combo, candidate, offset))
             }
             let priority: [UInt32] = preferredArch.map { [$0.rawValue32] } ?? [0x8000_0002, 0x0100_000C, 0x0000_000C]
             guard let chosen = priority.lazy.compactMap({ want in candidates.first { Self.matches($0.combo, want) } }).first else {
@@ -73,7 +77,7 @@ final class REBinary {
         let rawType = machO.header.layout.cputype
         let rawSub = machO.header.layout.cpusubtype
         if rawType == 0x0100_000C { // CPU_TYPE_ARM64
-            return (rawSub & 0x8000_0000) != 0 ? .arm64e : .arm64
+            return rawSub < 0 ? .arm64e : .arm64
         }
         if rawType == 0x0000_000C { // CPU_TYPE_ARM
             return .arm
