@@ -12,8 +12,29 @@ import ImageIO
 
 @main
 struct TheosLabApp: App {
+    init() { LaunchLog.write("app-init") }
+
     var body: some Scene {
-        WindowGroup { WorkspaceView() }
+        WindowGroup {
+            WorkspaceView()
+                .onAppear { LaunchLog.write("workspace-appear") }
+        }
+    }
+}
+
+/// 启动阶段的最小落盘标记，用于在无法连调试器时判断 scene 是否建立。
+enum LaunchLog {
+    static func write(_ event: String) {
+        let url = URL(fileURLWithPath: NSHomeDirectory())
+            .appendingPathComponent("Documents/theoslab-launch.log")
+        let line = "\(Int(Date().timeIntervalSince1970)) \(event)\n"
+        if let handle = try? FileHandle(forWritingTo: url) {
+            handle.seekToEndOfFile()
+            handle.write(Data(line.utf8))
+            try? handle.close()
+        } else {
+            try? line.write(to: url, atomically: true, encoding: .utf8)
+        }
     }
 }
 
