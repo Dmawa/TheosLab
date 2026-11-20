@@ -29,7 +29,8 @@ jobs:
             alpine:3.19 /bin/sh -eu <<'EOS'
           apk add --no-cache bash git curl ca-certificates make perl \
               clang17 lld llvm17 llvm17-dev dpkg fakeroot coreutils findutils \
-              xz tar rsync file zip build-base meson ninja musl-dev gcc radare2
+              xz tar rsync file zip build-base meson ninja musl-dev gcc radare2 \
+              sqlite-dev libarchive-dev pkgconf
 
           echo "==> Install zig (needed by iSH supervisor Makefile)"
           ZIGVER=0.13.0
@@ -49,7 +50,7 @@ jobs:
           make -C /ish/supervisor OUT_DIR=/tmp/supervisor
 
           echo "==> Build fakefsify host tool"
-          meson setup /tmp/ish-host /ish/third_party/ish >/dev/null
+          meson setup /tmp/ish-host /ish/third_party/ish
           meson compile -C /tmp/ish-host fakefsify
 
           echo "==> Stage provisioned rootfs"
