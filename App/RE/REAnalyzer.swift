@@ -105,7 +105,7 @@ final class REAnalyzer {
                         adrpPages[reg] = page
                     }
                 case "add":
-                    if let (reg, page) = adrpPages(for: insn) {
+                    if let (reg, page) = adrpPage(for: insn) {
                         if let base = page, let offset = Self.lastImmediate(of: insn) {
                             let target = base + offset
                             let kind: REXrefKind = stringAddresses.contains(target) ? .string : .data
@@ -269,7 +269,7 @@ final class REAnalyzer {
     }
 
     /// add x8, x8, #8：确认目标寄存器与源寄存器是 adrp 记录过的同一个。
-    private func adrpPages(for insn: REInstruction) -> (String, UInt64?)? {
+    private func adrpPage(for insn: REInstruction) -> (String, UInt64?)? {
         let parts = insn.operands.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }
         guard parts.count == 3, parts[1] == parts[0] else { return nil }
         return (parts[0], adrpPages[parts[0]])

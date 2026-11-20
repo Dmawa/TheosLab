@@ -21,7 +21,7 @@ struct REDisassemblyView: View {
         let instructions = session.instructions(for: function)
         let targets = Self.branchTargets(in: instructions)
         VStack(spacing: 0) {
-            header
+            header(instructions)
             Divider()
             DisassemblyCollection(instructions: instructions,
                                   session: session,
@@ -64,7 +64,7 @@ struct REDisassemblyView: View {
         }
     }
 
-    private var header: some View {
+    private func header(_ instructions: [REInstruction]) -> some View {
         HStack(spacing: 8) {
             Text(REFormat.hex(function.addr))
             Text(REFormat.size(function.size))

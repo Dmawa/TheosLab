@@ -50,7 +50,7 @@ struct RESymbol: Identifiable, Sendable {
     let name: String
     let isDefined: Bool
 
-    var id: UInt64
+    var id: UInt64 { addr }
 }
 
 /// 导出符号。
@@ -58,7 +58,7 @@ struct REExport: Identifiable, Sendable {
     let addr: UInt64
     let name: String
 
-    var id: UInt64
+    var id: UInt64 { addr }
 }
 
 /// 字符串表项。
@@ -66,7 +66,7 @@ struct REString: Identifiable, Sendable {
     let addr: UInt64
     let text: String
 
-    var id: UInt64
+    var id: UInt64 { addr }
 }
 
 /// 识别出的函数。

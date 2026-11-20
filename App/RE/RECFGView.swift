@@ -77,7 +77,7 @@ struct RECFGView: View {
         let title = REFormat.hex(node.block.start, width: 12)
         context.draw(Text(title)
             .font(.system(size: 10 * scale, design: .monospaced))
-            .foregroundStyle(.secondary),
+            .foregroundColor(.secondary),
             at: CGPoint(x: rect.minX + 10 * scale, y: rect.minY + 12 * scale),
             anchor: .leading)
 
@@ -88,7 +88,7 @@ struct RECFGView: View {
             let line = "\(insn.mnemonic) \(insn.operands)"
             context.draw(Text(line)
                 .font(.system(size: 9.5 * scale, design: .monospaced))
-                .foregroundStyle(.primary),
+                .foregroundColor(.primary),
                 at: CGPoint(x: rect.minX + 10 * scale,
                             y: rect.minY + (30 + CGFloat(index) * 13) * scale),
                 anchor: .leading)
@@ -96,7 +96,7 @@ struct RECFGView: View {
         if instructions.count > 4 {
             context.draw(Text("… 共 \(instructions.count) 条")
                 .font(.system(size: 9 * scale, design: .monospaced))
-                .foregroundStyle(.secondary),
+                .foregroundColor(.secondary),
                 at: CGPoint(x: rect.minX + 10 * scale,
                             y: rect.minY + CGFloat(node.height) * scale - 10 * scale),
                 anchor: .leading)

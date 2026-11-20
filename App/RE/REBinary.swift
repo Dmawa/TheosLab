@@ -47,9 +47,9 @@ final class REBinary {
                 let rawType = candidate.header.layout.cputype
                 let rawSub = candidate.header.layout.cpusubtype
                 if rawType == 0x0100_000C { // CPU_TYPE_ARM64
-                    candidates.append((rawSub, candidate, offset))
+                    candidates.append((UInt32(bitPattern: rawSub), candidate, offset))
                 } else if rawType == 0x0000_000C { // CPU_TYPE_ARM
-                    candidates.append((rawSub & 0x00FF_FFFF, candidate, offset))
+                    candidates.append((UInt32(bitPattern: rawSub & 0x00FF_FFFF), candidate, offset))
                 }
             }
             let priority: [UInt32] = preferredArch.map { [$0.rawValue32] } ?? [0x8000_0002, 0x0100_000C, 0x0000_000C]
@@ -127,7 +127,14 @@ final class REBinary {
     var symbols: [RESymbol] {
         var result: [RESymbol] = []
         for symbol in machO.symbols {
-            let value = Self.value(of: symbol)
+            let value: UInt64
+            if let n64 = symbol.nlist as? Nlist64 {
+                value = n64.layout.n_value
+            } else if let n32 = symbol.nlist as? Nlist {
+                value = UInt64(n32.layout.n_value)
+            } else {
+                value = 0
+            }
             let defined = symbol.nlist.sectionNumber != nil && value > 0
             guard defined, !symbol.name.isEmpty else { continue }
             result.append(RESymbol(addr: value, name: symbol.name, isDefined: true))
@@ -140,7 +147,14 @@ final class REBinary {
     var imports: [RESymbol] {
         var result: [RESymbol] = []
         for symbol in machO.symbols {
-            let value = Self.value(of: symbol)
+            let value: UInt64
+            if let n64 = symbol.nlist as? Nlist64 {
+                value = n64.layout.n_value
+            } else if let n32 = symbol.nlist as? Nlist {
+                value = UInt64(n32.layout.n_value)
+            } else {
+                value = 0
+            }
             let undefined = symbol.nlist.sectionNumber == nil && value == 0
             guard undefined, !symbol.name.isEmpty else { continue }
             result.append(RESymbol(addr: 0, name: symbol.name, isDefined: false))
@@ -155,16 +169,6 @@ final class REBinary {
             return REExport(addr: UInt64(offset), name: entry.name)
         }
         .sorted { $0.addr < $1.addr }
-    }
-
-    private static func value(of symbol: Symbol) -> UInt64 {
-        if let n64 = symbol.nlist as? Nlist64 {
-            return n64.layout.n_value
-        }
-        if let n32 = symbol.nlist as? Nlist {
-            return UInt64(n32.layout.n_value)
-        }
-        return 0
     }
 
     // MARK: - 字符串

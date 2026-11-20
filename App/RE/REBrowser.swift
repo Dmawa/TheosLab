@@ -45,7 +45,7 @@ struct REBrowser: View {
     // MARK: - iPhone：IDA 式导航栈
 
     private func iPhoneLayout(_ session: RESession) -> some View {
-        NavigationStack {
+        NavigationView {
             REOverviewView(session: session)
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
@@ -60,7 +60,7 @@ struct REBrowser: View {
     // MARK: - iPad：三栏（函数 | 反汇编 | 详情）
 
     private func iPadLayout(_ session: RESession) -> some View {
-        NavigationStack {
+        NavigationView {
             HStack(spacing: 0) {
                 REFunctionListView(session: session) { function in
                     selectedFunction = function

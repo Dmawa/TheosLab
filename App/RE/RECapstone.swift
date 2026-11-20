@@ -13,9 +13,7 @@ final class RECapstoneEngine {
         // 32 位 ARM 用 CS_MODE_V8 (1 << 6)。用 rawValue 构造，避免 C 枚举命名导入差异。
         let archValue: UInt32 = arch.is64Bit ? 1 : 0
         let modeValue: UInt32 = arch.is64Bit ? 0 : (1 << 6)
-        guard let archEnum = cs_arch(rawValue: archValue),
-              let modeEnum = cs_mode(rawValue: modeValue),
-              cs_open(archEnum, modeEnum, &raw) == 0 else {
+        guard cs_open(cs_arch(rawValue: archValue), cs_mode(rawValue: modeValue), &raw).rawValue == 0 else {
             throw REError.unsupported("Capstone 初始化失败 · \(arch.rawValue)")
         }
         handle = raw
@@ -32,7 +30,7 @@ final class RECapstoneEngine {
         guard let base = bytes.baseAddress else { return [] }
         var pointer: UnsafeMutablePointer<cs_insn>?
         let decoded = cs_disasm(handle, base.assumingMemoryBound(to: UInt8.self),
-                                bytes.count, address, Int32(clamping: count), &pointer)
+                                bytes.count, address, count, &pointer)
         guard decoded > 0, let pointer else { return [] }
         defer { cs_free(pointer, decoded) }
         return (0..<Int(decoded)).map { index in
