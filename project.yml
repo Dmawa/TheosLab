@@ -18,7 +18,7 @@ targets:
     settings:
       base:
         DEFINES_MODULE: NO
-        HEADER_SEARCH_PATHS: "$(SRCROOT)/Vendor/Capstone/include"
+        HEADER_SEARCH_PATHS: "$(SRCROOT)/Vendor/Capstone/include $(SRCROOT)/Vendor/Capstone"
         GCC_PREPROCESSOR_DEFINITIONS:
           - CAPSTONE_HAS_ARM=1
           - CAPSTONE_HAS_AARCH64=1
