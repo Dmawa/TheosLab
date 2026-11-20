@@ -1,4 +1,4 @@
-location	package	version	origin	license	aports revision
+﻿location	package	version	origin	license	aports revision
 build guest	alpine-baselayout	3.4.3-r2	alpine-baselayout	GPL-2.0-only	7749273fed55f6e1df7c9ee6a127f18099f98a94
 build guest	alpine-baselayout-data	3.4.3-r2	alpine-baselayout	GPL-2.0-only	7749273fed55f6e1df7c9ee6a127f18099f98a94
 build guest	alpine-keys	2.4-r1	alpine-keys	MIT	aab68f8c9ab434a46710de8e12fb3206e2930a59
@@ -100,3 +100,4 @@ base VM template	musl-utils	1.2.4_git20230717-r4	musl	MIT AND BSD-2-Clause AND G
 base VM template	scanelf	1.3.7-r2	pax-utils	GPL-2.0-only	e65a4f2d0470e70d862ef2b5c412ecf2cb9ad0a6
 base VM template	ssl_client	1.36.1-r15	busybox	GPL-2.0-only	d1b6f274f29076967826e0ecf6ebcaa5d360272f
 base VM template	zlib	1.3.1-r0	zlib	Zlib	9406f6fc5fca057d990eb0d260d75839eeb34d83
+build guest	radare2	3.19 community	radare2	LGPL-3.0-or-later	community (v3.19)

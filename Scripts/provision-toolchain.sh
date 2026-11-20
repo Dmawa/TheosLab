@@ -43,6 +43,21 @@ if ! command -v zip >/dev/null 2>&1; then
     apk add --no-cache zip
 fi
 
+# 反汇编模块的 rizin 桥：radare2 来自 3.19 community（默认仓库，不动 musl）。
+# r2ghidra 只在 edge/testing 有包，但混入 edge 会升级 musl、可能破坏 iSH 兼容性，
+# 因此仅当显式指定 THEOSLAB_R2GHIDRA=1 时才安装（有降级链 pdc 兜底）。
+if ! command -v radare2 >/dev/null 2>&1; then
+    printf '%s\n' "Installing radare2"
+    apk add --no-cache radare2 || printf '%s\n' "WARN: radare2 安装失败，反编译功能不可用（构建功能不受影响）"
+fi
+if [ "${THEOSLAB_R2GHIDRA:-0}" = "1" ] && [ ! -f /usr/lib/radare2/*/ghidra.so ]; then
+    printf '%s\n' "Installing r2ghidra from edge/testing (opt-in, may break iSH emulation)"
+    apk add --no-cache \
+        --repository https://dl-cdn.alpinelinux.org/alpine/edge/community \
+        --repository https://dl-cdn.alpinelinux.org/alpine/edge/testing \
+        r2ghidra || printf '%s\n' "WARN: r2ghidra 安装失败，伪代码将降级到 pdc"
+fi
+
 # fakefs can't apply rsync's permission updates.
 # New files still use the source mode, masked by umask.
 cat > /usr/local/bin/rsync <<'RSYNC'

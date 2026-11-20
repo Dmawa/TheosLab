@@ -330,12 +330,28 @@ final class TheosRuntime: @unchecked Sendable {
         try stream(["/bin/busybox", "tar", "-xf", "-", "-C", guest], input: archive, log: log)
     }
 
-    private func capture(_ argv: [String], cwd: String? = nil) throws -> Data {
-        let result = try kernel.runOneshot(.init(argv: argv, cwd: cwd, env: environment, timeout: 30))
+    /// 在来宾中一次性执行命令并返回 stdout；超时秒数可配置（反编译等长任务需要更久）。
+    func execute(_ argv: [String], cwd: String? = nil, timeout: TimeInterval = 30) throws -> Data {
+        let result = try kernel.runOneshot(.init(argv: argv, cwd: cwd, env: environment, timeout: timeout))
         guard result.exitCode == 0, result.signal == 0, !result.timedOut else {
-            throw WorkspaceError.message(String(decoding: result.stderrData, as: UTF8.self))
+            let detail = String(decoding: result.stderrData, as: UTF8.self)
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            if result.timedOut {
+                throw WorkspaceError.message("命令超时 · \(argv[0])")
+            }
+            throw WorkspaceError.message(detail.isEmpty
+                ? "命令失败 · \(argv[0]) · 退出码 \(result.exitCode)" : detail)
         }
         return result.stdoutData
+    }
+
+    private func capture(_ argv: [String], cwd: String? = nil) throws -> Data {
+        try execute(argv, cwd: cwd, timeout: 30)
+    }
+
+    /// 把 App 侧的一个文件送进来宾 Linux（反汇编模块用它传输待分析二进制）。
+    func upload(_ source: URL, to guest: String, log: @escaping (String) -> Void) throws {
+        try stream(["/bin/sh", "-c", "cat > \"$1\"", "sh", guest], input: source, log: log)
     }
 
     private func stream(_ argv: [String], cwd: String? = nil, input: URL? = nil, output: URL? = nil,

@@ -6,7 +6,24 @@ packages:
   IshEmbed:
     url: https://github.com/Lolendor/ish-arm64-pkg
     exactVersion: 0.3.3
+  MachOKit:
+    url: https://github.com/p-x9/MachOKit
+    revision: 7b5921f601d8d91043faab7820040cd585904720
 targets:
+  CapstoneCore:
+    type: library.static
+    platform: iOS
+    sources:
+      - Vendor/Capstone/src
+    settings:
+      base:
+        DEFINES_MODULE: NO
+        HEADER_SEARCH_PATHS: "$(SRCROOT)/Vendor/Capstone/include"
+        GCC_PREPROCESSOR_DEFINITIONS:
+          - CAPSTONE_HAS_ARM=1
+          - CAPSTONE_HAS_AARCH64=1
+          - CAPSTONE_STATIC=1
+          - CAPSTONE_USE_SYS_DYN_MEM=1
   TheosLab:
     type: application
     platform: iOS
@@ -29,8 +46,11 @@ targets:
         type: folder
     dependencies:
       - package: IshEmbed
+      - package: MachOKit
+      - target: CapstoneCore
     settings:
       base:
+        SWIFT_INCLUDE_PATHS: "$(SRCROOT)/Vendor/Capstone/include"
         PRODUCT_BUNDLE_IDENTIFIER: local.theoslab.workspace
         ARCHS: arm64
         TARGETED_DEVICE_FAMILY: "1,2"
@@ -41,3 +61,8 @@ targets:
         MARKETING_VERSION: "2.8"
         CURRENT_PROJECT_VERSION: "1"
         CODE_SIGN_STYLE: Automatic
+schemes:
+  TheosLab:
+    build:
+      targets:
+        TheosLab: all

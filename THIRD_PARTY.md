@@ -21,3 +21,15 @@ The guest includes Procursus ldid v2.1.5-procursus7 for AArch64 Linux. Its sourc
 ## Obfuscator-LLVM
 
 The bundled `ollvm.so` uses Obfuscator-LLVM under the University of Illinois/NCSA license. The upstream notice is included in `Guest/Toolchain`. `Scripts/build-ollvm.sh` fetches the release revision and compiles it with `Toolchain/TheosLabOLLVM.cpp` for the guest's LLVM 17.0.5. [Obfuscator-LLVM source](https://github.com/eshard/obfuscator-llvm/tree/a629c1f9ee54a2dc99797dcb71f5a92a8478563f) · [Build script](Scripts/build-ollvm.sh)
+
+## Capstone
+
+The disassembly module links Capstone v5.0.1, distributed under the BSD 3-Clause license, as a static library compiled from the vendored sources in `Vendor/Capstone` (ARM and AArch64 only). [Capstone source](https://github.com/capstone-engine/capstone/tree/5.0.1)
+
+## MachOKit
+
+Mach-O parsing in the disassembly module uses MachOKit, distributed under the MIT license, as a Swift package pinned by revision in `project.yml`. [MachOKit source](https://github.com/p-x9/MachOKit)
+
+## radare2
+
+The guest toolchain includes radare2 (LGPL-3.0-or-later) from the Alpine 3.19 community repository, installed by `Scripts/provision-toolchain.sh`. It runs as a separate guest process for the decompilation feature; the iOS app itself does not link its code. The r2ghidra plugin (LGPL-3.0-only, Alpine edge/testing) is opt-in via `THEOSLAB_R2GHIDRA=1` because mixing edge repositories upgrades musl and may break iSH emulation; without it the module falls back to radare2's built-in pseudo-decompiler. [radare2 source](https://github.com/radareorg/radare2) · [r2ghidra source](https://github.com/radareorg/r2ghidra)

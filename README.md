@@ -6,6 +6,16 @@
 
 在 iPhone 或 iPad 上选一个 Theos 项目、选 iPhoneOS SDK、编辑源码并运行 GNU Make。App 内嵌 IshEmbed 的 ARM64 Linux 运行时，使用上游 Theos 的 Makefile 和 Logos、Perl 等构建工具。构建发生在设备上。
 
+## 反汇编模块（Theos Disassembler）
+
+v2.8 起内置一个移动版 IDA 风格的反汇编器：构建完成后在「产物」菜单点「反汇编」，直接分析刚编译出来的 tweak/dylib，不用传回电脑。也可以从「文件」导入任意 Mach-O。
+
+- 原生引擎：Capstone 5.0.1（BSD-3，`Vendor/Capstone` 源码编译）+ MachOKit（MIT）解析 Mach-O，函数识别（LC_FUNCTION_STARTS / 符号表 / bl 递归下降 / 序言启发式）、交叉引用、控制流图、按需反汇编，结果缓存在 `Documents/Analysis/<sha256>-<arch>.sqlite`
+- 反编译：产物传入内嵌 Linux，调用 radare2 + r2ghidra（Alpine edge 仓库）的 `pdg` 输出伪代码，失败自动降级到 r2 内置 `pdc`；r2 缺席时只影响反编译，构建功能不受影响
+- 界面：iPhone 导航栈（概览 → 函数 → 反汇编 → 伪代码/CFG/交叉引用/十六进制），iPad 三栏布局；支持函数重命名与注释，写回索引库
+
+重新生成工程时 `xcodegen` 会自动纳入 `App/RE` 与 `Vendor/Capstone`。工具链重新 provision 一次即可获得反编译器（见 `Scripts/provision-toolchain.sh`）。
+
 ## 构建 App
 
 在安装了完整 Xcode 的 Mac 上打开源码目录。可以从 Release 的 IPA 提取工具链镜像，再生成 Xcode 工程。

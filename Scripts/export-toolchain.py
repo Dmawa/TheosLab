@@ -31,6 +31,13 @@ for path in tools:
     if not (root / "data" / path).is_file():
         parser.error("provisioning guest is missing " + path)
 
+# 反编译器是可选组件：缺席只裁掉反编译能力，不阻塞导出。
+r2ghidra_plugins = list((root / "data/usr/lib/radare2").glob("*/ghidra.so"))
+if not (root / "data/usr/bin/radare2").is_file():
+    print("WARN: guest has no radare2; decompilation will be unavailable")
+elif not r2ghidra_plugins:
+    print("WARN: guest has no r2ghidra plugin; decompilation will be unavailable")
+
 drop_contents = (
     b"/opt/theos/sdks", b"/root", b"/tmp", b"/var/cache",
     b"/var/log", b"/run", b"/mnt", b"/home",

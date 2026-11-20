@@ -85,6 +85,7 @@ private struct WorkspaceView: View {
     @State private var format = BuildFormat.automatic
     @State private var outputs: [URL] = []
     @State private var share: ShareItem?
+    @State private var disassembling: ShareItem?
 
     var body: some View {
         NavigationView {
@@ -177,6 +178,9 @@ private struct WorkspaceView: View {
                 .navigationViewStyle(.stack)
             }
             .sheet(item: $share) { item in ShareSheet(url: item.url) }
+            .fullScreenCover(item: $disassembling) { item in
+                REBrowser(url: item.url)
+            }
             .sheet(isPresented: $buildSettings, onDismiss: {
                 guard let kind = importAfterSettings else { return }
                 importAfterSettings = nil
@@ -459,6 +463,14 @@ private struct WorkspaceView: View {
                 Menu("产物") {
                     ForEach(outputs, id: \.self) { url in
                         Button(url.lastPathComponent) { share = ShareItem(url: url) }
+                    }
+                    Divider()
+                    ForEach(outputs, id: \.self) { url in
+                        Button {
+                            disassembling = ShareItem(url: url)
+                        } label: {
+                            Label("反汇编 \(url.lastPathComponent)", systemImage: "waveform.path")
+                        }
                     }
                 }
             }
