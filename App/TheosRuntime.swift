@@ -40,7 +40,7 @@ final class TheosRuntime: @unchecked Sendable {
     @discardableResult
     static func unpackGuest() throws -> URL {
         let files = FileManager.default
-        let guest = guestDirectory
+        var guest = guestDirectory
         let marker = guest.appendingPathComponent("fs/data/opt/.theoslab-ready")
         if files.fileExists(atPath: marker.path) { return guest }
         guard let archiveURL = Bundle.main.url(forResource: "Guest", withExtension: "zip") else {
