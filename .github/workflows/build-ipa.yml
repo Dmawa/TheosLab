@@ -2,12 +2,18 @@ name: build-ipa
 
 on:
   workflow_dispatch:
+    inputs:
+      light:
+        description: "Diagnostic build without the guest toolchain (small IPA)"
+        type: boolean
+        default: false
   push:
     branches: [main]
 
 jobs:
   toolchain:
     name: Provision Alpine toolchain (arm64)
+    if: ${{ inputs.light != true }}
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 120
     steps:
@@ -113,6 +119,7 @@ jobs:
   ipa:
     name: Build unsigned IPA
     needs: toolchain
+    if: ${{ always() && (needs.toolchain.result == 'success' || needs.toolchain.result == 'skipped') }}
     runs-on: macos-15
     timeout-minutes: 60
     steps:
@@ -120,6 +127,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Download toolchain artifact
+        if: ${{ inputs.light != true }}
         uses: actions/download-artifact@v4
         with:
           name: theoslab-toolchain
@@ -130,10 +138,22 @@ jobs:
 
       - name: Assemble Generated/Guest
         run: |
-          tar -xzf /tmp/toolchain/theoslab-toolchain.tar.gz -C /tmp/toolchain
-          mkdir -p Generated/Guest
-          ditto /tmp/toolchain/fs Generated/Guest/fs
-          ditto /tmp/toolchain/Toolchain Generated/Guest/Toolchain
+          if [ "${{ inputs.light }}" = "true" ]; then
+            mkdir -p Generated/Guest/fs/data/opt/theos/makefiles
+            mkdir -p Generated/Guest/fs/data/usr/bin
+            mkdir -p Generated/Guest/Toolchain
+            : > Generated/Guest/fs/meta.db
+            : > Generated/Guest/fs/data/opt/.theoslab-ready
+            : > Generated/Guest/fs/data/usr/bin/zip
+            : > Generated/Guest/fs/data/opt/theos/makefiles/common.mk
+            : > Generated/Guest/Toolchain/ollvm.so
+            : > Generated/Guest/Toolchain/LICENSE-OBFUSCATOR.TXT
+          else
+            tar -xzf /tmp/toolchain/theoslab-toolchain.tar.gz -C /tmp/toolchain
+            mkdir -p Generated/Guest
+            ditto /tmp/toolchain/fs Generated/Guest/fs
+            ditto /tmp/toolchain/Toolchain Generated/Guest/Toolchain
+          fi
           ls Generated/Guest/fs
           du -sh Generated/Guest
 
