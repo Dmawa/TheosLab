@@ -11,14 +11,23 @@ import UniformTypeIdentifiers
 import ImageIO
 
 @main
-struct TheosLabApp: App {
-    init() { LaunchLog.write("app-init") }
+final class LabApplication: UIResponder, UIApplicationDelegate {
+    var window: UIWindow?
 
-    var body: some Scene {
-        WindowGroup {
-            WorkspaceView()
-                .onAppear { LaunchLog.write("workspace-appear") }
-        }
+    func application(_ application: UIApplication,
+                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        LaunchLog.write("didFinishLaunching")
+        let window = UIWindow(frame: UIScreen.main.bounds)
+        window.rootViewController = UIHostingController(
+            rootView: WorkspaceView().onAppear { LaunchLog.write("workspace-appear") })
+        window.makeKeyAndVisible()
+        self.window = window
+        LaunchLog.write("window-made")
+        return true
+    }
+
+    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+        UIDevice.current.userInterfaceIdiom == .pad ? .all : .allButUpsideDown
     }
 }
 
