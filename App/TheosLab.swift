@@ -34,20 +34,14 @@ final class LabApplication: UIResponder, UIApplicationDelegate {
 /// 直接把 UIHostingController 设为 window 的 rootViewController 在部分签名/系统组合下首帧不渲染，
 /// 用普通 UIViewController 包一层可保证视图层级与布局正常发生。
 final class LabRootController: UIViewController {
+    private let host = UIHostingController(
+        rootView: WorkspaceView().onAppear { LaunchLog.write("workspace-appear") })
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemTeal
+        view.backgroundColor = .systemBackground
         LaunchLog.write("root-vc")
 
-        let mark = UILabel()
-        mark.text = "UIKit OK"
-        mark.font = .systemFont(ofSize: 26, weight: .bold)
-        mark.textColor = .white
-        mark.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(mark)
-
-        let host = UIHostingController(
-            rootView: WorkspaceView().onAppear { LaunchLog.write("workspace-appear") })
         addChild(host)
         host.view.translatesAutoresizingMaskIntoConstraints = false
         host.view.backgroundColor = .clear
@@ -55,11 +49,9 @@ final class LabRootController: UIViewController {
         host.didMove(toParent: self)
 
         NSLayoutConstraint.activate([
-            mark.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            mark.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 12),
             host.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             host.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            host.view.topAnchor.constraint(equalTo: view.topAnchor, constant: 60),
+            host.view.topAnchor.constraint(equalTo: view.topAnchor),
             host.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
     }
