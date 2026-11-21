@@ -11,55 +11,15 @@ import UniformTypeIdentifiers
 import ImageIO
 
 @main
-final class LabApplication: UIResponder, UIApplicationDelegate {
-    var window: UIWindow?
-
-    func application(_ application: UIApplication,
-                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        LaunchLog.write("didFinishLaunching")
-        let window = UIWindow(frame: UIScreen.main.bounds)
-        window.rootViewController = LabRootController()
-        window.makeKeyAndVisible()
-        self.window = window
-        LaunchLog.write("window-made")
-        return true
-    }
-
-    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
-        UIDevice.current.userInterfaceIdiom == .pad ? .all : .allButUpsideDown
+struct TheosLabApp: App {
+    var body: some Scene {
+        WindowGroup {
+            WorkspaceView().onAppear { LaunchLog.write("workspace-appear") }
+        }
     }
 }
 
-/// 承载 SwiftUI 内容的容器控制器。
-/// 直接把 UIHostingController 设为 window 的 rootViewController 在部分签名/系统组合下首帧不渲染，
-/// 用普通 UIViewController 包一层可保证视图层级与布局正常发生。
-final class LabRootController: UIViewController {
-    private var host: UIViewController?
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .systemBackground
-        LaunchLog.write("root-vc")
-
-        let root = WorkspaceView().onAppear { LaunchLog.write("workspace-appear") }
-        let host = UIHostingController(rootView: root)
-        addChild(host)
-        host.view.translatesAutoresizingMaskIntoConstraints = false
-        host.view.backgroundColor = .clear
-        view.addSubview(host.view)
-        host.didMove(toParent: self)
-
-        NSLayoutConstraint.activate([
-            host.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            host.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            host.view.topAnchor.constraint(equalTo: view.topAnchor),
-            host.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-        ])
-        self.host = host
-    }
-}
-
-/// 启动阶段的最小落盘标记，用于在无法连调试器时判断 scene 是否建立。
+/// 启动阶段的最小落盘标记，用于在无法连调试器时判断界面是否渲染。
 enum LaunchLog {
     static func write(_ event: String) {
         let url = URL(fileURLWithPath: NSHomeDirectory())

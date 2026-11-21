@@ -30,6 +30,12 @@ targets:
   TheosLab:
     type: application
     platform: iOS
+    info:
+      path: Generated/AppInfo.plist
+      properties:
+        CFBundleDisplayName: Theos Lab
+        UIFileSharingEnabled: true
+        LSSupportsOpeningDocumentsInPlace: true
     sources:
       - App
       - Resources
@@ -52,7 +58,10 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: local.theoslab.workspace
         ARCHS: arm64
         TARGETED_DEVICE_FAMILY: "1,2"
-        INFOPLIST_FILE: Support/Info.plist
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: Theos Lab
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
         MARKETING_VERSION: "2.8"
         CURRENT_PROJECT_VERSION: "1"
         CODE_SIGN_STYLE: Automatic
