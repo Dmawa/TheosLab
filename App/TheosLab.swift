@@ -34,14 +34,15 @@ final class LabApplication: UIResponder, UIApplicationDelegate {
 /// 直接把 UIHostingController 设为 window 的 rootViewController 在部分签名/系统组合下首帧不渲染，
 /// 用普通 UIViewController 包一层可保证视图层级与布局正常发生。
 final class LabRootController: UIViewController {
-    private let host = UIHostingController(
-        rootView: WorkspaceView().onAppear { LaunchLog.write("workspace-appear") })
+    private var host: UIViewController?
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         LaunchLog.write("root-vc")
 
+        let root = WorkspaceView().onAppear { LaunchLog.write("workspace-appear") }
+        let host = UIHostingController(rootView: root)
         addChild(host)
         host.view.translatesAutoresizingMaskIntoConstraints = false
         host.view.backgroundColor = .clear
@@ -54,6 +55,7 @@ final class LabRootController: UIViewController {
             host.view.topAnchor.constraint(equalTo: view.topAnchor),
             host.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
+        self.host = host
     }
 }
 
