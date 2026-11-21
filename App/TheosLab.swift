@@ -37,7 +37,7 @@ enum LaunchLog {
 
 private struct WorkspaceView: View {
     private enum ImportKind: String, Identifiable {
-        case project, sdk, ollvm, pass, library, arm64eLinker
+        case project, sdk, ollvm, pass, library, arm64eLinker, binary
         var id: Self { self }
 
         var types: [UTType] {
@@ -240,6 +240,13 @@ private struct WorkspaceView: View {
                 Label(project?.lastPathComponent ?? "项目", systemImage: "folder")
                     .lineLimit(1)
             }.accessibilityIdentifier("project-menu")
+            Button {
+                beginImport(.binary)
+            } label: {
+                Image(systemName: "waveform.path")
+            }
+                .accessibilityLabel("反汇编二进制")
+                .help("选择 dylib / deb / ipa / Mach-O 文件进入反汇编")
             if project != nil {
                 Button {
                     if width == .regular { showNavigator.toggle() } else { browser = true }
@@ -599,6 +606,7 @@ private struct WorkspaceView: View {
         case .ollvm, .pass: importObfuscator(selection, kind: kind)
         case .arm64eLinker: importARM64eLinker(selection)
         case .library: try importLibrary(selection.url)
+        case .binary: disassembling = ShareItem(url: selection.url)
         }
     }
 
