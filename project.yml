@@ -6,16 +6,30 @@ packages:
   IshEmbed:
     url: https://github.com/Lolendor/ish-arm64-pkg
     exactVersion: 0.3.3
+  MachOKit:
+    url: https://github.com/p-x9/MachOKit
+    revision: 7b5921f601d8d91043faab7820040cd585904720
+  ZIPFoundation:
+    url: https://github.com/weichsel/ZIPFoundation
+    exactVersion: 0.9.19
 targets:
+  CapstoneCore:
+    type: library.static
+    platform: iOS
+    sources:
+      - Vendor/Capstone/src
+    settings:
+      base:
+        DEFINES_MODULE: NO
+        HEADER_SEARCH_PATHS: "$(SRCROOT)/Vendor/Capstone/include $(SRCROOT)/Vendor/Capstone"
+        GCC_PREPROCESSOR_DEFINITIONS:
+          - CAPSTONE_HAS_ARM=1
+          - CAPSTONE_HAS_AARCH64=1
+          - CAPSTONE_STATIC=1
+          - CAPSTONE_USE_SYS_DYN_MEM=1
   TheosLab:
     type: application
     platform: iOS
-    info:
-      path: Generated/AppInfo.plist
-      properties:
-        CFBundleDisplayName: Theos Lab
-        UIFileSharingEnabled: true
-        LSSupportsOpeningDocumentsInPlace: true
     sources:
       - App
       - Resources
@@ -26,18 +40,24 @@ targets:
       - path: ALPINE-PACKAGES.tsv
         buildPhase: resources
       - path: Generated/Guest
-        type: folder
+        buildPhase: resources
     dependencies:
       - package: IshEmbed
+      - package: MachOKit
+      - package: ZIPFoundation
+      - target: CapstoneCore
     settings:
       base:
+        SWIFT_INCLUDE_PATHS: "$(SRCROOT)/Vendor/Capstone/include"
         PRODUCT_BUNDLE_IDENTIFIER: local.theoslab.workspace
         ARCHS: arm64
         TARGETED_DEVICE_FAMILY: "1,2"
-        GENERATE_INFOPLIST_FILE: YES
-        INFOPLIST_KEY_CFBundleDisplayName: Theos Lab
-        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
-        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_FILE: Support/Info.plist
         MARKETING_VERSION: "2.8"
         CURRENT_PROJECT_VERSION: "1"
         CODE_SIGN_STYLE: Automatic
+schemes:
+  TheosLab:
+    build:
+      targets:
+        TheosLab: all
