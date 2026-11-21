@@ -8,6 +8,7 @@
 import Foundation
 import CryptoKit
 import IshEmbed
+import ZIPFoundation
 
 enum BuildFormat: String, CaseIterable, Identifiable {
     case automatic, ipa, dylib, deb
@@ -25,33 +26,67 @@ final class TheosRuntime: @unchecked Sendable {
         "HOME": "/root", "THEOS": "/opt/theos", "LC_ALL": "C.UTF-8", "TMPDIR": "/tmp"
     ]
 
-    func boot() throws {
-        if kernel.isRunning { return }
+    /// 解包后的 Guest 目录（含 fs / Toolchain / SDKs）。
+    static var guestDirectory: URL {
         let files = FileManager.default
-        let support = try files.url(for: .applicationSupportDirectory, in: .userDomainMask,
-                                    appropriateFor: nil, create: true)
-        let legacy = support.appendingPathComponent("Alpine-0.3.3")
-        let bundledRoot = support.appendingPathComponent("Alpine-Offline-1")
-        let legacyTools = ["opt/.theoslab-ready", "opt/theos/makefiles/common.mk",
-                           "usr/bin/clang", "usr/bin/ld64.lld", "usr/bin/zip", "usr/local/bin/ldid"]
-        var root = legacyTools.allSatisfy { files.fileExists(atPath: legacy.appendingPathComponent("data/" + $0).path) }
-            ? legacy : bundledRoot
-        if !files.fileExists(atPath: root.path) {
-            guard let bundled = Bundle.main.resourceURL?.appendingPathComponent("Guest/fs"),
-                  files.fileExists(atPath: bundled.appendingPathComponent("meta.db").path),
-                  legacyTools.allSatisfy({
-                      files.fileExists(atPath: bundled.appendingPathComponent("data/" + $0).path)
-                  }) else {
-                throw WorkspaceError.message("安装包缺少内嵌的 Theos 构建环境。")
-            }
-            let staging = support.appendingPathComponent(UUID().uuidString)
-            defer { try? files.removeItem(at: staging) }
-            try files.copyItem(at: bundled, to: staging)
-            try files.moveItem(at: staging, to: root)
+        let support = (try? files.url(for: .applicationSupportDirectory, in: .userDomainMask,
+                                      appropriateFor: nil, create: true))
+            ?? URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent("Library/Application Support")
+        return support.appendingPathComponent("Guest")
+    }
+
+    /// 解包完成标记，位于 Guest 根目录（不属于 rootfs）。改变归档布局时递增版本。
+    private static let guestMarker = ".unpacked-v1"
+
+    /// 首次启动把安装包内的 Guest.zip 解包到 Application Support。
+    /// rootfs 以单个归档存放，避免 ldid 递归签名时把 Linux ELF 当作 Mach-O。
+    @discardableResult
+    static func unpackGuest() throws -> URL {
+        let files = FileManager.default
+        var guest = guestDirectory
+        if isGuestUsable(guest) { return guest }
+        if files.fileExists(atPath: guest.path) { try? files.removeItem(at: guest) }
+        guard let archiveURL = Bundle.main.url(forResource: "Guest", withExtension: "zip") else {
+            throw WorkspaceError.message("安装包缺少内嵌的 Theos 构建环境。")
         }
+        let staging = guest.deletingLastPathComponent()
+            .appendingPathComponent("Guest-staging-\(UUID().uuidString)")
+        try files.createDirectory(at: staging, withIntermediateDirectories: true)
+        defer { try? files.removeItem(at: staging) }
+        let archive = try Archive(url: archiveURL, accessMode: .read)
+        for entry in archive {
+            let destination = staging.appendingPathComponent(entry.path)
+            try files.createDirectory(at: destination.deletingLastPathComponent(),
+                                      withIntermediateDirectories: true)
+            _ = try archive.extract(entry, to: destination, skipCRC32: true)
+        }
+        let extracted = staging.appendingPathComponent("Guest")
+        if files.fileExists(atPath: guest.path) { try files.removeItem(at: guest) }
+        try files.moveItem(at: extracted, to: guest)
         var resources = URLResourceValues()
         resources.isExcludedFromBackup = true
-        try? root.setResourceValues(resources)
+        try? guest.setResourceValues(resources)
+        try Data().write(to: guest.appendingPathComponent(guestMarker))
+        return guest
+    }
+
+    /// 只有存档里真正的 rootfs 才算可用：检查 meta.db 的 SQLite 头，
+    /// 避免把占位或中断留下的空文件当成已解包环境。
+    private static func isGuestUsable(_ guest: URL) -> Bool {
+        let files = FileManager.default
+        guard files.fileExists(atPath: guest.appendingPathComponent(guestMarker).path) else {
+            return false
+        }
+        let db = guest.appendingPathComponent("fs/meta.db")
+        guard let handle = try? FileHandle(forReadingFrom: db) else { return false }
+        defer { try? handle.close() }
+        guard let head = try? handle.read(upToCount: 16), head.count == 16 else { return false }
+        return head == Data("SQLite format 3\0".utf8)
+    }
+
+    func boot() throws {
+        if kernel.isRunning { return }
+        let root = try Self.unpackGuest().appendingPathComponent("fs")
         try kernel.boot(.init(rootfsPath: root.path))
     }
 
@@ -70,11 +105,12 @@ final class TheosRuntime: @unchecked Sendable {
     }
 
     static let recentSDKs = ["26.0", "27.0"]
-    static let bundledSDKs = recentSDKs.filter { bundledSDK($0) != nil }
+    static var bundledSDKs: [String] { recentSDKs.filter { bundledSDK($0) != nil } }
 
     private static func bundledSDK(_ version: String) -> URL? {
-        guard let archive = Bundle.main.resourceURL?.appendingPathComponent("Guest/SDKs/iPhoneOS\(version).sdk.tar.gz"),
-              FileManager.default.fileExists(atPath: archive.path) else { return nil }
+        guard let guest = try? unpackGuest() else { return nil }
+        let archive = guest.appendingPathComponent("SDKs/iPhoneOS\(version).sdk.tar.gz")
+        guard FileManager.default.fileExists(atPath: archive.path) else { return nil }
         return archive
     }
 
@@ -262,7 +298,7 @@ final class TheosRuntime: @unchecked Sendable {
         if options.obfuscation != .off {
             var bundledPass: String?
             if options.obfuscation == .builtIn {
-                let pass = Bundle.main.resourceURL?.appendingPathComponent("Guest/Toolchain/ollvm.so")
+                let pass = (try? Self.unpackGuest())?.appendingPathComponent("Toolchain/ollvm.so")
                 guard let pass, FileManager.default.fileExists(atPath: pass.path) else {
                     throw WorkspaceError.message("安装包缺少内嵌 OLLVM。")
                 }
@@ -330,12 +366,28 @@ final class TheosRuntime: @unchecked Sendable {
         try stream(["/bin/busybox", "tar", "-xf", "-", "-C", guest], input: archive, log: log)
     }
 
-    private func capture(_ argv: [String], cwd: String? = nil) throws -> Data {
-        let result = try kernel.runOneshot(.init(argv: argv, cwd: cwd, env: environment, timeout: 30))
+    /// 在来宾中一次性执行命令并返回 stdout；超时秒数可配置（反编译等长任务需要更久）。
+    func execute(_ argv: [String], cwd: String? = nil, timeout: TimeInterval = 30) throws -> Data {
+        let result = try kernel.runOneshot(.init(argv: argv, cwd: cwd, env: environment, timeout: timeout))
         guard result.exitCode == 0, result.signal == 0, !result.timedOut else {
-            throw WorkspaceError.message(String(decoding: result.stderrData, as: UTF8.self))
+            let detail = String(decoding: result.stderrData, as: UTF8.self)
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            if result.timedOut {
+                throw WorkspaceError.message("命令超时 · \(argv[0])")
+            }
+            throw WorkspaceError.message(detail.isEmpty
+                ? "命令失败 · \(argv[0]) · 退出码 \(result.exitCode)" : detail)
         }
         return result.stdoutData
+    }
+
+    private func capture(_ argv: [String], cwd: String? = nil) throws -> Data {
+        try execute(argv, cwd: cwd, timeout: 30)
+    }
+
+    /// 把 App 侧的一个文件送进来宾 Linux（反汇编模块用它传输待分析二进制）。
+    func upload(_ source: URL, to guest: String, log: @escaping (String) -> Void) throws {
+        try stream(["/bin/sh", "-c", "cat > \"$1\"", "sh", guest], input: source, log: log)
     }
 
     private func stream(_ argv: [String], cwd: String? = nil, input: URL? = nil, output: URL? = nil,

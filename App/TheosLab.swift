@@ -12,8 +12,30 @@ import ImageIO
 
 @main
 struct TheosLabApp: App {
+    init() { LaunchLog.write("app-init") }
+
     var body: some Scene {
         WindowGroup { WorkspaceView() }
+        /* HELLO
+                .font(.system(size: 42, weight: .bold))
+                .foregroundColor(.blue)
+                        */
+    }
+}
+
+/// 启动阶段的最小落盘标记，用于在无法连调试器时判断界面是否渲染。
+enum LaunchLog {
+    static func write(_ event: String) {
+        let url = URL(fileURLWithPath: NSHomeDirectory())
+            .appendingPathComponent("Documents/theoslab-launch.log")
+        let line = "\(Int(Date().timeIntervalSince1970)) \(event)\n"
+        if let handle = try? FileHandle(forWritingTo: url) {
+            handle.seekToEndOfFile()
+            handle.write(Data(line.utf8))
+            try? handle.close()
+        } else {
+            try? line.write(to: url, atomically: true, encoding: .utf8)
+        }
     }
 }
 
@@ -85,6 +107,7 @@ private struct WorkspaceView: View {
     @State private var format = BuildFormat.automatic
     @State private var outputs: [URL] = []
     @State private var share: ShareItem?
+    @State private var disassembling: ShareItem?
 
     var body: some View {
         NavigationView {
@@ -177,6 +200,9 @@ private struct WorkspaceView: View {
                 .navigationViewStyle(.stack)
             }
             .sheet(item: $share) { item in ShareSheet(url: item.url) }
+            .fullScreenCover(item: $disassembling) { item in
+                REBrowser(url: item.url)
+            }
             .sheet(isPresented: $buildSettings, onDismiss: {
                 guard let kind = importAfterSettings else { return }
                 importAfterSettings = nil
@@ -459,6 +485,14 @@ private struct WorkspaceView: View {
                 Menu("产物") {
                     ForEach(outputs, id: \.self) { url in
                         Button(url.lastPathComponent) { share = ShareItem(url: url) }
+                    }
+                    Divider()
+                    ForEach(outputs, id: \.self) { url in
+                        Button {
+                            disassembling = ShareItem(url: url)
+                        } label: {
+                            Label("反汇编 \(url.lastPathComponent)", systemImage: "waveform.path")
+                        }
                     }
                 }
             }
