@@ -157,12 +157,6 @@ jobs:
           ls Generated/Guest/fs
           du -sh Generated/Guest
 
-      - name: Archive guest as single zip
-        run: |
-          cd Generated
-          ditto -c -k --keepParent Guest Guest.zip
-          rm -rf Guest
-          ls -lh Guest.zip
 
       - name: Generate Xcode project
         run: xcodegen generate
