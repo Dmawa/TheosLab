@@ -35,14 +35,17 @@ final class TheosRuntime: @unchecked Sendable {
         return support.appendingPathComponent("Guest")
     }
 
+    /// 解包完成标记，位于 Guest 根目录（不属于 rootfs）。改变归档布局时递增版本。
+    private static let guestMarker = ".unpacked-v1"
+
     /// 首次启动把安装包内的 Guest.zip 解包到 Application Support。
     /// rootfs 以单个归档存放，避免 ldid 递归签名时把 Linux ELF 当作 Mach-O。
     @discardableResult
     static func unpackGuest() throws -> URL {
         let files = FileManager.default
-        var guest = guestDirectory
-        let marker = guest.appendingPathComponent("fs/data/opt/.theoslab-ready")
-        if files.fileExists(atPath: marker.path) { return guest }
+        let guest = guestDirectory
+        if isGuestUsable(guest) { return guest }
+        if files.fileExists(atPath: guest.path) { try? files.removeItem(at: guest) }
         guard let archiveURL = Bundle.main.url(forResource: "Guest", withExtension: "zip") else {
             throw WorkspaceError.message("安装包缺少内嵌的 Theos 构建环境。")
         }
@@ -63,7 +66,22 @@ final class TheosRuntime: @unchecked Sendable {
         var resources = URLResourceValues()
         resources.isExcludedFromBackup = true
         try? guest.setResourceValues(resources)
+        try Data().write(to: guest.appendingPathComponent(guestMarker))
         return guest
+    }
+
+    /// 只有存档里真正的 rootfs 才算可用：检查 meta.db 的 SQLite 头，
+    /// 避免把占位或中断留下的空文件当成已解包环境。
+    private static func isGuestUsable(_ guest: URL) -> Bool {
+        let files = FileManager.default
+        guard files.fileExists(atPath: guest.appendingPathComponent(guestMarker).path) else {
+            return false
+        }
+        let db = guest.appendingPathComponent("fs/meta.db")
+        guard let handle = try? FileHandle(forReadingFrom: db) else { return false }
+        defer { try? handle.close() }
+        guard let head = try? handle.read(upToCount: 16), head.count == 16 else { return false }
+        return head == Data("SQLite format 3\0".utf8)
     }
 
     func boot() throws {
