@@ -108,7 +108,8 @@ final class TheosRuntime: @unchecked Sendable {
     static var bundledSDKs: [String] { recentSDKs.filter { bundledSDK($0) != nil } }
 
     private static func bundledSDK(_ version: String) -> URL? {
-        guard let guest = try? unpackGuest() else { return nil }
+        let guest = guestDirectory
+        guard isGuestUsable(guest) else { return nil } // 只查已解包目录；解压只能发生在后台线程
         let archive = guest.appendingPathComponent("SDKs/iPhoneOS\(version).sdk.tar.gz")
         guard FileManager.default.fileExists(atPath: archive.path) else { return nil }
         return archive
