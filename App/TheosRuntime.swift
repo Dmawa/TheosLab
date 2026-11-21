@@ -43,7 +43,7 @@ final class TheosRuntime: @unchecked Sendable {
     @discardableResult
     static func unpackGuest() throws -> URL {
         let files = FileManager.default
-        let guest = guestDirectory
+        var guest = guestDirectory
         if isGuestUsable(guest) { return guest }
         if files.fileExists(atPath: guest.path) { try? files.removeItem(at: guest) }
         guard let archiveURL = Bundle.main.url(forResource: "Guest", withExtension: "zip") else {
