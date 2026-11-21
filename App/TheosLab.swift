@@ -12,9 +12,14 @@ import ImageIO
 
 @main
 struct TheosLabApp: App {
+    init() { LaunchLog.write("app-init") }
+
     var body: some Scene {
         WindowGroup {
-            WorkspaceView().onAppear { LaunchLog.write("workspace-appear") }
+            Text("HELLO THEOS")
+                .font(.system(size: 42, weight: .bold))
+                .foregroundColor(.blue)
+                .onAppear { LaunchLog.write("hello-appear") }
         }
     }
 }
