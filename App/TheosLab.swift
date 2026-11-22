@@ -606,7 +606,16 @@ private struct WorkspaceView: View {
         case .ollvm, .pass: importObfuscator(selection, kind: kind)
         case .arm64eLinker: importARM64eLinker(selection)
         case .library: try importLibrary(selection.url)
-        case .binary: disassembling = ShareItem(url: selection.url)
+        case .binary:
+            let scratch = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+                .appendingPathComponent("Disassembly", isDirectory: true)
+            try FileManager.default.createDirectory(at: scratch, withIntermediateDirectories: true)
+            let dst = scratch.appendingPathComponent(selection.url.lastPathComponent)
+            if FileManager.default.fileExists(atPath: dst.path) {
+                try FileManager.default.removeItem(at: dst)
+            }
+            try FileManager.default.copyItem(at: selection.url, to: dst)
+            disassembling = ShareItem(url: dst)
         }
     }
 
